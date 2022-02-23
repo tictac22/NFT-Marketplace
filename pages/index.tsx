@@ -6,9 +6,22 @@ import { styled } from '@mui/system';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
+interface Form {
+	name:string,
+	description:string,
+}
+
 const Home: NextPage = () => {
-	const [img,setImg] = useState(null);
+	const [form,setForm] = useState<Form>({name:"",description:""});
+	const [img,setImg] = useState();
 	const ref = useRef(null)
+	const isDisabled = form.name.trim() && form.description.trim() && ref.current.src.replace("http://localhost:3000/","") ? false : true;
+	//console.log(isDisabled)
+	const ChangeForm = (e,field:string):void => {
+		let value = e.target.value;
+		if(value.length <= 1) value = value.trimStart();
+		setForm(prevState =>({...prevState,[field]:value}))
+	}
 	const nftToupload = (e:React.ChangeEvent<HTMLInputElement>):void => {
 		const file = e.target.files![0];
 		if(!file) return;
@@ -16,19 +29,22 @@ const Home: NextPage = () => {
 		if(types.indexOf(file.type)  == -1) return;
 		if(file.size > 100 * 1024**2) return;
 		ref.current.src = URL.createObjectURL(file)
-
+		setImg(URL.createObjectURL(file))
+	}
+	const createNft = ():void => {
+		console.log(form,img)
 	}
 	return (
 		<Container>
 			<Form>
 				<FormElement>
 					<p>Name</p>
-					<TextField sx={{width:"100%"}} placeholder="Item name" id="outlined-basic" variant="outlined" />
+					<TextField value={form.name} onChange={e=>{ChangeForm(e,"name")}} sx={{width:"100%"}} placeholder="Item name" id="outlined-basic" variant="outlined" />
 				</FormElement>
 				<FormElement>
 					<p>Description</p>
 					<p>The description will be included on the item's detail page underneath its image</p>
-					<TextArea placeholder="Provide a detailed description of your item"/>
+					<TextArea value={form.description} onChange={e=>{ChangeForm(e,"description")}} placeholder="Provide a detailed description of your item"/>
 				</FormElement>
 				<FileSelect>
 					<p>File types supported: JPG, PNG</p>
@@ -36,7 +52,7 @@ const Home: NextPage = () => {
 					<InputFile onChange={nftToupload} type="file" accept="image/png, image/jpeg" multiple/>
 				</FileSelect>
 				<ImagePreview ref={ref} src="" alt="#" title=" "/>
-				<Button sx={{marginTop:"30px"}} variant="contained">Upload</Button>
+				<Button onClick={createNft} disabled={isDisabled} variant="contained">Upload</Button>
 			</Form>
 		</Container>
 	)
@@ -57,7 +73,10 @@ const Form = styled("div")({
 	gap:"13px",
 	maxWidth:"1024px",
 	width: "100%",
-	margin: "15px 15px"
+	margin: "15px 15px",
+	"& > div": {
+		marginTop:"10px"
+	}
 
 })
 const FormElement = styled("div")({

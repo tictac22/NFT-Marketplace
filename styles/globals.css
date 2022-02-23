@@ -13,6 +13,7 @@ html,body{
 	width: 100%;
 	overflow-x: hidden;
 	font-size: 18px;
+	font-family: "Roboto";
 	
 }
 body._lock{
@@ -74,4 +75,10 @@ input[type='file'] {
 }
 [src=''] {
   visibility: hidden;
+}
+::placeholder {
+	font-family: 'Roboto', sans-serif;
+	font-size: 14px;
+	color: "a7a7a7a" !important;
+	font-weight: 300;
 }
