@@ -35,45 +35,39 @@ const Home: NextPage = () => {
 		console.log(form,img)
 	}
 	return (
-		<Container>
-			<Form>
-				<FormElement>
-					<p>Name</p>
-					<TextField value={form.name} onChange={e=>{ChangeForm(e,"name")}} sx={{width:"100%"}} placeholder="Item name" id="outlined-basic" variant="outlined" />
-				</FormElement>
-				<FormElement>
-					<p>Description</p>
-					<p>The description will be included on the item's detail page underneath its image</p>
-					<TextArea value={form.description} onChange={e=>{ChangeForm(e,"description")}} placeholder="Provide a detailed description of your item"/>
-				</FormElement>
-				<FileSelect>
-					<p>File types supported: JPG, PNG</p>
-					<Button variant="contained">Chose image</Button>
-					<InputFile onChange={nftToupload} type="file" accept="image/png, image/jpeg" multiple/>
-				</FileSelect>
-				<ImagePreview ref={ref} src="" alt="#" title=" "/>
-				<Button onClick={createNft} disabled={isDisabled} variant="contained">Upload</Button>
-			</Form>
-		</Container>
+		<main>
+			<div className="container">
+				<Form>
+					<FormElement>
+						<p>Name</p>
+						<TextField value={form.name} onChange={e=>{ChangeForm(e,"name")}} sx={{width:"100%"}} placeholder="Item name" id="outlined-basic" variant="outlined" />
+					</FormElement>
+					<FormElement>
+						<p>Description</p>
+						<p>The description will be included on the item's detail page underneath its image</p>
+						<TextArea value={form.description} onChange={e=>{ChangeForm(e,"description")}} placeholder="Provide a detailed description of your item"/>
+					</FormElement>
+					<FileSelect>
+						<p>File types supported: JPG, PNG</p>
+						<Button variant="contained">Chose image</Button>
+						<InputFile onChange={nftToupload} type="file" accept="image/png, image/jpeg" multiple/>
+					</FileSelect>
+					<ImagePreview ref={ref} src="" alt="#" title=" "/>
+					<Button onClick={createNft} disabled={isDisabled} variant="contained">Upload</Button>
+				</Form>
+			</div>
+		</main>
 	)
 }
 
 export default Home
 
-const Container = styled("div")({
-	display: "flex",
-	alignItems:"center",
-	justifyContent:"center",
-	minHeight:"100vh",
-})
 const Form = styled("div")({
 	display: "flex",
 	flexDirection:"column",
 	alignItems:"center",
 	gap:"13px",
-	maxWidth:"1024px",
-	width: "100%",
-	margin: "15px 15px",
+	marginTop:"20px",
 	"& > div": {
 		marginTop:"10px"
 	}
