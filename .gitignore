@@ -3,7 +3,9 @@
 node_modules
 package-lock.json
 build-info
+artifacts
 @openzeppelin
+@openzeppelin/**
 .env
 artifacts
 cache
