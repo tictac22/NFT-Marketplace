@@ -9,9 +9,9 @@ contract MarketPlace is ReentrancyGuard {
 	using Counters for Counters.Counter;
 	Counters.Counter private _itemIds;
 
-	address payable owner;
+	address payable public owner;
 	uint256 public listingPrice = 0.025 ether;
-	mapping(uint256 => MarketItem) idToMarketItem;
+	mapping(uint256 => MarketItem) public idToMarketItem;
 	struct MarketItem {
 		uint256 itemId;
 		address nftContract;
@@ -28,20 +28,20 @@ contract MarketPlace is ReentrancyGuard {
 	}
 
 	function createMarketItem(address nftContract,uint256 tokenId,uint256 price) public payable nonReentrant {
-		require(price > 0);
-		require(msg.value == listingPrice);
+		require(price > 0,"price should be more than 0");
+		require(msg.value == listingPrice, "transfering should be equal listingPrice");
 
 		_itemIds.increment();
 		uint256 currentId = _itemIds.current();
 
-		idToMarketItem[currentId] = MarketItem(currentId,nftContract,tokenId,payable(address(0)),payable(msg.sender),price,false);
+		idToMarketItem[currentId] = MarketItem(currentId,nftContract,tokenId,payable(address(this)),payable(msg.sender),price,false);
 		ERC721(nftContract).transferFrom(msg.sender,address(this),tokenId);
-		emit MarketItemCreated(currentId, nftContract, tokenId, payable(address(0)), payable(msg.sender),price, false);
+		emit MarketItemCreated(currentId, nftContract, tokenId, payable(address(this)), payable(msg.sender),price, false);
 	}
 	function sellMarketItem(address nftContract, uint256 itemId) public payable nonReentrant {
 		uint256 price = idToMarketItem[itemId].price;
 		address payable seller = idToMarketItem[itemId].seller;
-		require(msg.value == price + listingPrice);
+		require(msg.value == price + listingPrice,"value should be price + listingPrice");
 
 		ERC721(nftContract).transferFrom(address(this),msg.sender,itemId);
 
