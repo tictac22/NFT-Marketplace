@@ -47,15 +47,10 @@ describe("NFT and MarketPlace", () => {
 			expect(await NFT.ownerOf(1)).to.equal(Market.address);
 		})
 		it("sells market item", async () => {
-			console.log("Market",Market.address)
-			console.log("NFT",NFT.address)
-			console.log("owner",owner.address)
-			const marketItem = await Market.idToMarketItem(1);
-			console.log(marketItem);
-			console.log("addr1",addr1.address)
 			await Market.connect(addr1).sellMarketItem(NFT.address,1,{from:addr1.address,value:ethers.utils.parseEther("0.125")})
-			console.log(await Market.idToMarketItem(1))
 			expect(await NFT.ownerOf(1)).to.equal(addr1.address);
+			const marketItem = await Market.idToMarketItem(1);
+			expect(marketItem.owner).to.equal(addr1.address);
 		})
 	})
 });

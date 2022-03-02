@@ -2,63 +2,80 @@
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
-contract MarketPlace is ReentrancyGuard {
+contract MarketPlace is ERC721URIStorage {
 	using Counters for Counters.Counter;
 	Counters.Counter private _itemIds;
 
 	address payable public owner;
-	uint256 public listingPrice = 0.025 ether;
+	uint256 public listingPrice = 2 ether;
 	mapping(uint256 => MarketItem) public idToMarketItem;
 	struct MarketItem {
 		uint256 itemId;
-		address nftContract;
-		uint256 tokenId;
+		string tokenURI;
 		address payable owner;
 		address payable seller;
 		uint256 price;
 		bool sold;
 	}
-	event MarketItemCreated(uint256 indexed itemId,address indexed nftContract,uint256 indexed tokenId,address owner,address seller,uint256 price,bool sold);
-	
-	constructor() {
+	event MarketItemCreated(uint256 indexed itemId,string tokenURI,address owner,address indexed seller,uint256 price);
+	constructor() ERC721("MetaNFT","MFT") {
 		owner = payable(msg.sender);
 	}
-
-	function createMarketItem(address nftContract,uint256 tokenId,uint256 price) public payable nonReentrant {
-		require(price > 0,"price should be more than 0");
-		require(msg.value == listingPrice, "transfering should be equal listingPrice");
-
+    function createToken(string memory _tokenURI,uint256 price) public {
 		_itemIds.increment();
 		uint256 currentId = _itemIds.current();
 
-		idToMarketItem[currentId] = MarketItem(currentId,nftContract,tokenId,payable(address(this)),payable(msg.sender),price,false);
-		ERC721(nftContract).transferFrom(msg.sender,address(this),tokenId);
-		emit MarketItemCreated(currentId, nftContract, tokenId, payable(address(this)), payable(msg.sender),price, false);
+		_mint(msg.sender,currentId);
+		_setTokenURI(currentId,_tokenURI);
+		createMarketItem(_tokenURI,price);
 	}
-	function sellMarketItem(address nftContract, uint256 itemId) public payable nonReentrant {
-		uint256 price = idToMarketItem[itemId].price;
-		address payable seller = idToMarketItem[itemId].seller;
-		require(msg.value == price + listingPrice,"value should be price + listingPrice");
+    function getPrice() public view returns(uint256) {
+        return idToMarketItem[1].price + listingPrice;
+    }
+	function createMarketItem(string memory _tokenURI, uint256 price) private {
+		uint256 currentId = _itemIds.current();
 
-		ERC721(nftContract).transferFrom(address(this),msg.sender,itemId);
-
-		seller.transfer(msg.value);
-		owner.transfer(listingPrice);
-		idToMarketItem[itemId].owner = payable(msg.sender);
-		idToMarketItem[itemId].seller = payable(address(0));
-		idToMarketItem[itemId].sold = true;
-	}
-	function resellMarketItem(address nftContract,uint256 itemId,uint256 price) public {
-		require(idToMarketItem[itemId].owner == msg.sender);
+		idToMarketItem[currentId] = MarketItem(currentId,_tokenURI,payable(address(this)),payable(msg.sender),price,false);
+		setApprovalForAll(address(this),true);
+		transferFrom(msg.sender,address(this),currentId);
+		emit MarketItemCreated(currentId,_tokenURI,address(this),msg.sender,price);
 		
-		idToMarketItem[itemId].sold = false;
-		idToMarketItem[itemId].price = price;
-		idToMarketItem[itemId].owner = payable(address(this));
-		idToMarketItem[itemId].seller = payable(msg.sender);
+	}
+	function buyMarketItem(uint256 _itemId) public payable {
+		MarketItem storage currentMarketItem = idToMarketItem[_itemId];
+		
+		require(msg.value <= currentMarketItem.price + listingPrice, "value should be equal price");
+		require(currentMarketItem.seller != msg.sender,"you can't buy nft from yourself");
+		require(!currentMarketItem.sold,"already sold");
 
-		ERC721(nftContract).transferFrom(msg.sender,address(this),itemId);
+		currentMarketItem.seller.transfer(msg.value - listingPrice);
+		owner.transfer(msg.value - currentMarketItem.price);
+
+		currentMarketItem.owner = payable(msg.sender);
+		currentMarketItem.seller = payable(address(0));
+		currentMarketItem.sold = true;
+
+		_transfer(address(this),msg.sender,_itemId);
+		 
+	}
+	function resellMarketItem(uint256 _itemId,uint256 price) public payable {
+		MarketItem storage currentMarketItem = idToMarketItem[_itemId];
+		require(currentMarketItem.owner == msg.sender,"only owner");
+		require(currentMarketItem.sold,"not sold");
+
+		currentMarketItem.seller.transfer(msg.value - listingPrice);
+		
+		currentMarketItem.owner = payable(address(this));
+		currentMarketItem.seller = payable(msg.sender);
+		currentMarketItem.sold = false;
+		currentMarketItem.price = price;
+		_transfer(msg.sender,address(this),_itemId);
+
 	}
 }
+//103
+//99
