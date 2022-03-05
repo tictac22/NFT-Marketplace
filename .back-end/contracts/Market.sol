@@ -11,7 +11,7 @@ contract MarketPlace is ERC721URIStorage {
 	Counters.Counter private _itemIds;
 
 	address payable public owner;
-	uint256 public listingPrice = 2 ether;
+	uint256 public listingPrice = 0.02 ether;
 	mapping(uint256 => MarketItem) public idToMarketItem;
 	struct MarketItem {
 		uint256 itemId;
@@ -33,9 +33,6 @@ contract MarketPlace is ERC721URIStorage {
 		_setTokenURI(currentId,_tokenURI);
 		createMarketItem(_tokenURI,price);
 	}
-    function getPrice() public view returns(uint256) {
-        return idToMarketItem[1].price + listingPrice;
-    }
 	function createMarketItem(string memory _tokenURI, uint256 price) private {
 		uint256 currentId = _itemIds.current();
 
@@ -48,7 +45,7 @@ contract MarketPlace is ERC721URIStorage {
 	function buyMarketItem(uint256 _itemId) public payable {
 		MarketItem storage currentMarketItem = idToMarketItem[_itemId];
 		
-		require(msg.value <= currentMarketItem.price + listingPrice, "value should be equal price");
+		require(msg.value == currentMarketItem.price + listingPrice, "value should be equal price");
 		require(currentMarketItem.seller != msg.sender,"you can't buy nft from yourself");
 		require(!currentMarketItem.sold,"already sold");
 
@@ -64,10 +61,12 @@ contract MarketPlace is ERC721URIStorage {
 	}
 	function resellMarketItem(uint256 _itemId,uint256 price) public payable {
 		MarketItem storage currentMarketItem = idToMarketItem[_itemId];
+		require(msg.value == listingPrice,"value should be equal listingPrice");
 		require(currentMarketItem.owner == msg.sender,"only owner");
+		require(currentMarketItem.owner != address(this));
 		require(currentMarketItem.sold,"not sold");
 
-		currentMarketItem.seller.transfer(msg.value - listingPrice);
+		currentMarketItem.seller.transfer(msg.value);
 		
 		currentMarketItem.owner = payable(address(this));
 		currentMarketItem.seller = payable(msg.sender);
@@ -77,5 +76,3 @@ contract MarketPlace is ERC721URIStorage {
 
 	}
 }
-//103
-//99
