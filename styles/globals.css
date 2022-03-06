@@ -79,6 +79,14 @@ address{
 input[type='file'] {
   color: transparent;
 }
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+	-moz-appearance: textfield;
+}
 [src=''] {
   visibility: hidden;
 }

@@ -1,26 +1,37 @@
-import type { NextPage } from 'next'
+import type { GetServerSideProps, NextPage } from 'next'
 
-import { useState,useRef } from 'react';
+import { useState,useRef, useEffect } from 'react';
 
 import { styled } from '@mui/system';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import InputAdornment from '@mui/material/InputAdornment';
+import OutlinedInput from '@mui/material/OutlinedInput';
 
 interface Form {
 	name:string,
 	description:string,
+	price:string,
+	img:{
+		url:string,
+		data:File
+	}
 }
-
-const Home: NextPage = () => {
-	const [form,setForm] = useState<Form>({name:"",description:""});
-	const [img,setImg] = useState();
+interface Props {
+	response: {
+		EUR:number
+	}
+}
+const Home: NextPage<Props> = ({response}) => {
+	const [form,setForm] = useState<Form>({name:"",description:"",price:"",img:{url:"",data:{}}});
 	const ref = useRef(null)
-	const isDisabled = form.name.trim() && form.description.trim() && ref.current.src.replace("http://localhost:3000/","") ? false : true;
-	//console.log(isDisabled)
-	const ChangeForm = (e,field:string):void => {
-		let value = e.target.value;
-		if(value.length <= 1) value = value.trimStart();
-		setForm(prevState =>({...prevState,[field]:value}))
+	const isDisabled = form.name.trim() && form.description.trim() && form.price && form.img.url && form.img.data ? false : true;
+	const ChangeForm = (field:string) => {
+		return (e:React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+			let value = e.target.value;
+			if(value.length <= 1) value = value.trimStart();
+			setForm(prevState =>({...prevState,[field]:value}))
+		}
 	}
 	const nftToupload = (e:React.ChangeEvent<HTMLInputElement>):void => {
 		const file = e.target.files![0];
@@ -29,10 +40,16 @@ const Home: NextPage = () => {
 		if(types.indexOf(file.type)  == -1) return;
 		if(file.size > 100 * 1024**2) return;
 		ref.current.src = URL.createObjectURL(file)
-		setImg(URL.createObjectURL(file))
+		setForm(prevState =>(
+			{...prevState,
+				img:{
+					url:URL.createObjectURL(file),
+					data:file
+				}
+		}))
 	}
 	const createNft = ():void => {
-		console.log(form,img)
+		console.log(form)
 	}
 	return (
 		<main>
@@ -40,12 +57,25 @@ const Home: NextPage = () => {
 				<Form>
 					<FormElement>
 						<p>Name</p>
-						<TextField value={form.name} onChange={e=>{ChangeForm(e,"name")}} sx={{width:"100%"}} placeholder="Item name" id="outlined-basic" variant="outlined" />
+						<TextField value={form.name} onChange={ChangeForm("name")} sx={{width:"100%"}} placeholder="Item name" id="outlined-basic" variant="outlined" />
 					</FormElement>
 					<FormElement>
 						<p>Description</p>
 						<p>The description will be included on the item's detail page underneath its image</p>
-						<TextArea value={form.description} onChange={e=>{ChangeForm(e,"description")}} placeholder="Provide a detailed description of your item"/>
+						<TextArea value={form.description} onChange={ChangeForm("description")} placeholder="Provide a detailed description of your item"/>
+					</FormElement>
+					<FormElement>
+						<p>Set price in matic</p>
+						<OutlinedInput 
+							value={form.name} 
+							onChange={ChangeForm("price")} 
+							sx={{width:"100%"}} 
+							placeholder="Price" 
+							id="outlined-basic"
+							value={form.price}
+							type="number"					  
+							endAdornment={<InputAdornment position="end">{form.price ? (parseFloat(form.price) * response.EUR).toFixed(2) : "0"}€</InputAdornment>}				
+						/>
 					</FormElement>
 					<FileSelect>
 						<p>File types supported: JPG, PNG</p>
@@ -59,8 +89,17 @@ const Home: NextPage = () => {
 		</main>
 	)
 }
-
 export default Home
+
+export const getServerSideProps:GetServerSideProps = async () => {
+	const request = await fetch("https://min-api.cryptocompare.com/data/price?fsym=matic&tsyms=USD,JPY,EUR&api_key=504ba0a009fd2a78aee6d891f3452f1aeb09d070324159f6d3ce686f073c2605")
+	const response = await request.json()
+	return {
+		props : {
+			response
+		}
+	}
+}
 
 const Form = styled("div")({
 	display: "flex",
