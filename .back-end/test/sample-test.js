@@ -10,8 +10,9 @@ describe("MarketPlace", () => {
 	beforeEach(async () => {
 		[owner,addr1,addr2,addr3] = await ethers.getSigners();
 		
-		const market = await ethers.getContractFactory("MarketPlace");
-		Market = await market.deploy();
+		let market = await ethers.getContractFactory("MarketPlace");
+		Market = await upgrades.deployProxy(market,[])
+		await market.deploy();
 	})
 	it("should deploys correctly", async () => {
 		expect(await Market.owner()).to.equal(owner.address);

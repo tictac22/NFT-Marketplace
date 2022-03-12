@@ -2,9 +2,11 @@
   "name": "back",
   "version": "1.0.0",
   "description": "back for app",
-  "scripts": {},
+  "scripts": {
+    "compile":"hh clean & hh compile"
+  },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.5.0",
+    "@openzeppelin/contracts-upgradeable": "^4.5.2",
     "hardhat": "^2.8.4"
   },
   "devDependencies": {
