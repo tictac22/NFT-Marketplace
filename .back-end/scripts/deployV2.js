@@ -13,8 +13,8 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const MarketPlace = await ethers.getContractFactory("MarketPlace");
-  const marketPlace = await upgrades.deployProxy(MarketPlace,[]);
+  const MarketPlace = await ethers.getContractFactory("MarketPlaceV2");
+  const marketPlace = await upgrades.upgradeProxy("0x20FEc673dC31FDCDea88B7B33473134329dA1939",MarketPlace);
   console.log("marketPlace deployed to:", marketPlace.address);
 }
 

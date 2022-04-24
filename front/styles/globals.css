@@ -1,0 +1,99 @@
+*{
+	box-sizing: border-box;
+	margin: 0;
+	padding:0;
+	font-family:"FuturaPT";
+	font-weight: 400;
+}
+html,body{
+	margin: 0;
+	padding:0;
+	box-sizing: border-box;
+	height: 100%;
+	width: 100%;
+	font-size: 18px;
+	font-family: "Roboto";
+	padding-right: 0px !important;
+	
+}
+body._lock{
+	overflow: hidden;
+}
+h1,h2,h3,h4,h5,h6,ul{
+	margin: 0;
+	padding:0;
+}
+
+a{
+	text-decoration: none;
+	color: inherit;
+}
+li{
+	list-style: none;
+}
+input{
+	border:none;
+	outline: none;
+}
+input::-webkit-input-placeholder       {opacity: 1; transition: opacity 0.3s ease;}
+input::-moz-placeholder                {opacity: 1; transition: opacity 0.3s ease;}
+input:-moz-placeholder                 {opacity: 1; transition: opacity 0.3s ease;}
+input:-ms-input-placeholder            {opacity: 1; transition: opacity 0.3s ease;}
+input:focus::-webkit-input-placeholder {opacity: 0; transition: opacity 0.3s ease;}
+input:focus::-moz-placeholder          {opacity: 0; transition: opacity 0.3s ease;}
+input:focus:-moz-placeholder           {opacity: 0; transition: opacity 0.3s ease;}
+input:focus:-ms-input-placeholder      {opacity: 0; transition: opacity 0.3s ease;}
+textarea:focus::-webkit-input-placeholder {
+    opacity: 0;
+}
+button{
+	border:none;
+	outline: none;
+	background-color: none;
+}
+textarea{
+	outline: none;
+	border: none;
+	
+}
+address{
+	font-style: normal ;
+}
+:root {
+	--main:#1C658C;
+	--second:#398AB9;
+	--third:#D8D2CB;
+	--fourth:#EEEEEE;
+}
+.wrapper{
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	width: 100%;
+}
+.container{
+	max-width: 1430px;
+	padding: 0 15px;
+	margin: 0 auto;
+}
+input[type='file'] {
+  color: transparent;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+	-moz-appearance: textfield;
+}
+[src=''] {
+  visibility: hidden;
+}
+::placeholder {
+	font-family: 'Roboto', sans-serif;
+	font-size: 14px;
+	color: "a7a7a7a" !important;
+	font-weight: 300;
+}

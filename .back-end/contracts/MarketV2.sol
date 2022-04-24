@@ -6,7 +6,7 @@ import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 
 
-contract MarketPlace is ERC721URIStorageUpgradeable {
+contract MarketPlaceV2 is ERC721URIStorageUpgradeable {
 	using CountersUpgradeable for CountersUpgradeable.Counter;
 	CountersUpgradeable.Counter private _itemIds;
 
@@ -21,7 +21,7 @@ contract MarketPlace is ERC721URIStorageUpgradeable {
 		uint256 price;
 		bool sold;
 	}
-	event MarketItemCreated(uint256 indexed itemId,string tokenURI,address owner,address indexed seller,uint256 price);
+	event MarketItemCreated(uint256 indexed itemId,string tokenURI,address owner,address indexed seller,uint256 price,bool sold);
 	function initialize() initializer public {
 		owner = payable(msg.sender);
 		listingPrice = 0.02 ether;
@@ -41,7 +41,7 @@ contract MarketPlace is ERC721URIStorageUpgradeable {
 		idToMarketItem[currentId] = MarketItem(currentId,_tokenURI,payable(address(this)),payable(msg.sender),price,false);
 		setApprovalForAll(address(this),true);
 		transferFrom(msg.sender,address(this),currentId);
-		emit MarketItemCreated(currentId,_tokenURI,address(this),msg.sender,price);
+		emit MarketItemCreated(currentId,_tokenURI,address(this),msg.sender,price,false);
 		
 	}
 	function buyMarketItem(uint256 _itemId) public payable {
