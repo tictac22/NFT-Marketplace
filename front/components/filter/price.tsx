@@ -41,7 +41,6 @@ export const Price = () => {
 	const apply = () => {
 		let parsedMinPrice = convert(minPrice || "")
 		let parsedMaxPrice = convert(maxPrice || "")
-		console.log(parsedMinPrice,parsedMaxPrice)
 		if(!parsedMinPrice && !parsedMaxPrice) return
 		setMinPrice(parsedMinPrice)
 		setMaxPrice(parsedMaxPrice)
@@ -54,8 +53,8 @@ export const Price = () => {
 		push(path)
 	}
 	useEffect(() => {
-		const isMin = min === null ? "" : min;
-		const isMax = max === null ? "" : min
+		const isMin = min === null ? "" : min
+		const isMax = max === null ? "" : max
 		setMinPrice(isMin)
 		setMaxPrice(isMax) 
 		if(!isMin && !isMax) setAccordeonStatus(false);

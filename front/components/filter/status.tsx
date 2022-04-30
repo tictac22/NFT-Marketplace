@@ -18,7 +18,6 @@ export const Status:React.FC = memo(() => {
 		const statusType = text === "sold" ? true : false
 		if(status === statusType) {
 			const path = concat({...query,status:undefined});
-			console.log(path)
 			return push(path)
 		}
 		const path = concat({...query,status:`${statusType}`});

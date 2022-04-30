@@ -1,5 +1,5 @@
 
-import { GetServerSideProps, NextPage } from 'next';
+import { GetServerSideProps, NextPage, GetStaticProps } from 'next';
 
 import {  useState } from 'react';
 
@@ -27,17 +27,14 @@ const Home:NextPage<Props> = ({nfts}) => {
 		</main>
 	)
 }
-export const getServerSideProps:GetServerSideProps = async ({req,res}) => {
+export const getStaticProps:GetStaticProps = async () => {
 	const request = await fetch(`https://jhsndpxpj1yf.usemoralis.com:2053/server/functions/getAllNFTs?_ApplicationId=${APP_ID}&page=0`);
 	const response:{result:[]} = await request.json();
-	res.setHeader(
-		'Cache-Control',
-		'public, s-maxage=10, stale-while-revalidate=59'
-	)
 	return {
 		props : {
 			nfts:response.result
-		}
+		},
+		revalidate:30,
 	}
 }
 export default Home

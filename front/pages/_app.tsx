@@ -17,8 +17,8 @@ const theme = createTheme({
 		},
 	},
 });
-const serverUrl = SERVER_URL;
-const appId = APP_ID;
+const serverUrl = SERVER_URL!;
+const appId = APP_ID!;
 
 
 const MyApp = ({ Component, pageProps }:AppProps) => {

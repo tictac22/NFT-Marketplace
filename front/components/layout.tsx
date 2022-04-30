@@ -1,5 +1,5 @@
 
-import React,{useEffect} from 'react';
+import React,{useEffect, useRef} from 'react';
 import { useMoralis} from "react-moralis";
 import { Context } from '../context/contractContext';
 
@@ -12,18 +12,13 @@ import Cookies from 'js-cookie'
 
 export const Layout = ({children}:LayoutProps) => {
 	const {account,isInitialized,user,isWeb3Enabled,enableWeb3,isAuthenticated} = useMoralis();
+	const notInitialRender = useRef(false)
+	
 	useEffect(() => {
-		if(isInitialized) {
-			const cookieAddress = Cookies.get("user_id") || Cookies.get("user_id") === "null" ? undefined : Cookies.get("user_id");
-			if(cookieAddress && account) {
-				Cookies.set('user_id', account, { expires: 7 })
-			}
-			if(account) {
-				enableWeb3();
-			}
-			
-		}
-	},[account,isInitialized,isWeb3Enabled,enableWeb3])
+		const cookieAddress = !Cookies.get("user_id") || Cookies.get("user_id") === "null" ? undefined : Cookies.get("user_id");
+		if(cookieAddress) enableWeb3()
+		Cookies.set('user_id', account || "null", { expires: 1 })
+	},[account,isWeb3Enabled])
 	return (
 		<Context.Provider value={{abi:ABI.abi,marketAddress}}>
 			{children}

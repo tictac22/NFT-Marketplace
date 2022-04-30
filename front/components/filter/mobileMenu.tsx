@@ -17,6 +17,9 @@ interface Props {
 
 export const MobileMenu:React.FC<Props> = ({openMenu,handleMenuOpen}) => {
 	const router = useRouter();
+	const clearAll = () => {
+		router.push(`/user/${router.query.user}`)
+	}
 	const list = () => (
 	<Box
 		sx={{ width: "auto" }}
@@ -24,7 +27,7 @@ export const MobileMenu:React.FC<Props> = ({openMenu,handleMenuOpen}) => {
 		
 		<div style={{top:"72px",width:"100%",position:"absolute"}}>
 			<TextWrapper>
-					<p style={{fontWeight:"bold"}}>Clear All</p>
+					<p onClick={clearAll} style={{fontWeight:"bold",cursor:"pointer"}}>Clear All</p>
 					<p style={{fontWeight:"bold",cursor:"pointer"}} onClick={handleMenuOpen} >Done</p>
 			</TextWrapper>
 				<Status/>

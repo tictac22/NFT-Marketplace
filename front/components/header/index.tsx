@@ -1,25 +1,39 @@
 
-import React,{ useState } from "react"
+import React,{ useState, useEffect } from "react"
 
 import Link from 'next/link';
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
-const DynamicSearchBar = dynamic(() => import("./searchBar"))
 import { Menu } from './burger';
 
 import { styled } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
+const DynamicSearchBar = dynamic(() => import("./searchBar"))
+import LinearProgress from '@mui/material/LinearProgress';
 
 export const Header:React.FC = () => {
 	const router = useRouter()
 	const path = router.query.user && `/user/${router.query.user}`
+	const [isLoading,setLoading] = useState(false);
 	const [open,setOpen] = useState<boolean>(false);
 	const handleOpen = () => {
 		setOpen(!open);
 	}
-	
+	useEffect(() => {
+		router.events.on("routeChangeStart",() => setLoading(true))
+		router.events.on("routeChangeComplete",() => setLoading(false))
+		router.events.on("routeChangeError",() => setLoading(false))
+
+		return () => {
+			router.events.off("routeChangeStart",() => setLoading(true))
+			router.events.off("routeChangeComplete",() => setLoading(false))
+			router.events.off("routeChangeError",() => setLoading(false))
+		}
+ 	},[])
 	return (
+		<>
+		{isLoading && <LinearProgress/>}
 		<HeaderWrapper boxshadow={open ? 1 : 0}>
 			<div className="container" style={{height:"100%"}}>
 				<HeaderInner>
@@ -28,8 +42,8 @@ export const Header:React.FC = () => {
 						<Link href="/">
 							<LinkTo opacity={router.asPath === "/" ? 1 : 0 }>All NFTs</LinkTo>
 						</Link>
-						<Link href={`/user/account`}>
-							<LinkTo opacity={path === `/user/${router.query.user}` ? 1 : 0 }>Your NFTs</LinkTo>
+						<Link href={`/user/[user]`} as={"/user/account"} >
+							<LinkTo opacity={path === `/user/account` ? 1 : 0 }>Your NFTs</LinkTo>
 						</Link>
 						<Link href="/createnft">
 							<LinkTo opacity={router.asPath === "/createnft" ? 1 : 0 }>Create</LinkTo>
@@ -44,6 +58,7 @@ export const Header:React.FC = () => {
 				</HeaderInner>
 			</div>
 		</HeaderWrapper>
+		</>
 	)
 }
 const HeaderWrapper = styled("header")<{boxshadow:number}>(props =>({

@@ -12,14 +12,13 @@ import { useEffect } from 'react';
 
 const registration:NextPage = () => {
 	const router = useRouter();
-	const {authenticate} = useMoralis();
+	const {authenticate,account} = useMoralis();
 	
 	const authentication = async () => {
 		const user = await authenticate();
 		if(!user) return;
-
-		const ethAdrress = user.attributes.ethAddress;
-		Cookies.set('user_id', ethAdrress, { expires: 7 })
+		
+		Cookies.set('user_id', user.attributes.ethAddress, { expires: 1 })
 		const path = router.query.page;
 
 		if(!path) return router.push(`/user/account`);

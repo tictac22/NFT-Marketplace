@@ -17,7 +17,7 @@ interface Props {
 }
 export const NftUser:React.FC<Props> = ({name,url,price,id,sold}) => {
 	return (
-		<Link href={`/nft/${id}`}>
+		<Link href={`/nft/[id]`} as={`/nft/${id}`}  prefetch={false}>
 			<a style={{display:"flex"}}>
 				<Wrapper>
 					<div style={{position:"relative",height:"306px"}}>

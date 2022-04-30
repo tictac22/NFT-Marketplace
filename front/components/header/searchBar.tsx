@@ -85,7 +85,7 @@ const SearchBar:React.FC = () => {
 			}}
 			renderOption={(props, option) => (
 				<div onClick={handleClick}>
-					<Link key={option.objectId} href={`/nft/${option.objectId}`}>
+					<Link key={option.objectId} href={`/nft/[id]`} as={`/nft/${option.objectId}`} prefetch={false} >
 						<Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
 							<img
 								loading="lazy"

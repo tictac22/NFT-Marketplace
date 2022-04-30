@@ -1,5 +1,5 @@
 
-import { GetServerSideProps, NextPage } from 'next';
+import { GetServerSideProps, NextPage, GetStaticProps } from 'next';
 
 import { useContract } from '../../context/contractContext';
 import { useMoralis } from 'react-moralis';
@@ -18,9 +18,9 @@ interface Props {
 }
 const Nft:NextPage<Props> = ({nftData}) => {
 	const {tokenPrice} = usePrice();
-	const {Moralis,account,user,authenticate,isAuthenticated,isWeb3Enabled,enableWeb3} = useMoralis();
+	const {Moralis,account,user,authenticate,isAuthenticated,isWeb3Enabled,isInitialized} = useMoralis();
 	const {abi,marketAddress} = useContract();
-	
+	const [balance,setBalance] = useState(0);
 	const [open,setOpen] = useState<boolean>(false);
 	const handleClose = () => {
 		setOpen(!open)
@@ -51,6 +51,23 @@ const Nft:NextPage<Props> = ({nftData}) => {
 		nft.set("seller","0x0000000000000000000000000000000000000000");
 		await nft.save();
 	}
+	useEffect(() => {
+		const getBalance = async () => {
+			const options = {
+				chain: "mumbai",
+				address: account,
+			};
+			const balance = await Moralis.Web3API.account.getNativeBalance(options);
+			return balance
+		}
+		if(isInitialized) {
+			getBalance().then(data => {
+				let tokenValue:string | number = Moralis.Units.FromWei(data.balance)
+				tokenValue = parseFloat(tokenValue)
+				setBalance(tokenValue)
+			})
+		}
+	},[isWeb3Enabled,account])
 	return (
 		<div className="container">
 			<Wrapper>
@@ -68,18 +85,24 @@ const Nft:NextPage<Props> = ({nftData}) => {
 					}
 					<div style={{marginTop:"5px"}}>
 						{ account === nftData.seller ? <p style={{textDecoration:"underline"}}>you are currently selling</p> : 
-							nftData.sold ? "Currently sold" :  
-							<Button onClick={buyNFT} variant="contained">Buy now</Button>
+							nftData.sold ? "Currently sold" :
+							<>
+								<Button onClick={buyNFT} 
+										variant="contained" 
+										disabled={parseFloat(nftData.price) > balance ? true : false}>
+										Buy now
+								</Button>
+								{parseFloat(nftData.price) > balance && <p>You can't buy this nft because your balance is low</p>}
+								<p>Seller: 
+									<Link href={`/user/[user]`} as={`/user/${nftData.seller}`}>
+									<a style={{textDecoration:"underline"}}>
+										{nftData.seller}
+									</a>
+									</Link>
+								</p>
+							</>
 						}
 					</div>
-					<p>Owned By: </p>
-					{nftData.owner === "0x20fec673dc31fdcdea88b7b33473134329da1939" ? "market" : 
-						<Link href={`/user/${account === nftData.owner ? "account" : nftData.owner}`}>
-							<DecoratedLink>
-								{account === nftData.owner ? "you" : nftData.owner}
-							</DecoratedLink>
-						</Link>
-					}
 					{nftData.owner === account && nftData.sold &&
 						<div style={{marginTop:"10px"}}>
 							<Button variant="contained" onClick={handleClose} sx={{textTransform:"capitalize"}}>Resell</Button>
@@ -92,7 +115,24 @@ const Nft:NextPage<Props> = ({nftData}) => {
 	)
 }
 export default Nft
-
+/**
+ * 
+ *<p>Owned By:</p>
+					{
+						<Link href={`/user/${account === nftData.seller || account ===  nftData.owner ? "account" : nftData.seller}`}>
+							<DecoratedLink>
+								{account === nftData.seller || account ===  nftData.owner ? "you" : nftData.seller}
+							</DecoratedLink>
+						</Link>
+					}
+					{nftData.owner === account && nftData.sold &&
+						<div style={{marginTop:"10px"}}>
+							<Button variant="contained" onClick={handleClose} sx={{textTransform:"capitalize"}}>Resell</Button>
+							<ResellModal objectId={nftData.objectId} address={account} itemId={nftData.itemId} show={open} handleClose={handleClose}/>
+						</div>
+					}
+ * 
+ */
 export const getServerSideProps:GetServerSideProps  = async (context) => {
 	const id = context.params?.id
 	try {
@@ -101,10 +141,9 @@ export const getServerSideProps:GetServerSideProps  = async (context) => {
 		return {
 			props : {
 				nftData:response.result[0]
-			}
+			},
 		}
 	} catch(e) {
-		console.log(e.message)
 		return {
 			redirect: {
 				permanent: false,

@@ -11,6 +11,7 @@ import ExploreIcon from '@mui/icons-material/Explore';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import CreateIcon from '@mui/icons-material/Create';
 import Link from 'next/link';
+
 interface Props {
 	handleOpen: () => void,
 	open:boolean
@@ -23,7 +24,7 @@ interface LinkProps {
 const LinkWrapper:React.FC<LinkProps> = ({number,text}) => {
 	const href = number === 0 ? "/" : number === 1 ? "/user/account" : "/createnft"
 	return (
-		<Link href={href}>
+		<Link href={href} prefetch={false}>
 			<a>
 				<ListItem button key={text}>
 					<ListItemIcon>

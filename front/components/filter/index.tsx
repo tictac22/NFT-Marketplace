@@ -1,9 +1,7 @@
 import React, {useState} from 'react';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -14,7 +12,6 @@ import { Status } from './status';
 import { MobileButton } from './buttons/mobileButton';
 import { MobileMenu } from './mobileMenu';
 import { useRouter } from 'next/router';
-
 
 export const Filter:React.FC = () => {
 	const router = useRouter();

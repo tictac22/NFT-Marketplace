@@ -17,6 +17,7 @@ import { usePrice } from './../hooks/getTokenPrice';
 import { useContract } from '../context/contractContext';
 
 import { useRouter } from 'next/router';
+import { IsAuthenticated } from '../components/privatePage';
 interface Form {
 	name:string,
 	description:string,
@@ -39,7 +40,7 @@ const CreateNft: NextPage = () => {
 	const [form,setForm] = useState<Form>({name:"",description:"",price:"",img:{url:"",data:{}}});
 	const isDisabled = form.name.trim() && form.description.trim() && form.price && form.img.url && form.img.data && balance > 0.1 ? false : true;
 	
-	const ref = useRef(null)
+	const ref = useRef<HTMLInputElement>(null!)
 
 	const ChangeForm = (field:string) => {
 		return (e:React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -48,7 +49,7 @@ const CreateNft: NextPage = () => {
 			setForm(prevState =>({...prevState,[field]:value}))
 		}
 	}
-	const nftToupload = async (e:React.ChangeEvent<HTMLInputElement>):void => {
+	const nftToupload = async (e:React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files![0];
 		if(!file) return;
 		let types = ["image/jpeg", "image/png"];
@@ -127,8 +128,9 @@ const CreateNft: NextPage = () => {
 				setBalance(tokenValue)
 			})
 		}
-	},[isInitialized,account])
+	},[isWeb3Enabled,account])
 	return (
+		<IsAuthenticated>
 		<main style={{flex:"1 1 auto"}}>
 			<div className="container">
 				<BackDrop show={backDrop}/>
@@ -170,27 +172,10 @@ const CreateNft: NextPage = () => {
 				</Form>
 			</div>
 		</main>
+		</IsAuthenticated>
 	)
 }
 export default CreateNft
-
-export const getServerSideProps:GetServerSideProps = async ({req}) => {
-	const address = req.cookies.user_id;
-	if(!address || address === "null") {
-		return {
-			redirect: {
-				destination:"/registration?page=createnft",
-				permanent:false,
-			}
-		}
-	}
-	return {
-		props: {
-
-		}
-	}
-}
-
 
 const Form = styled("div")({
 	display: "flex",
@@ -221,13 +206,14 @@ const TextArea = styled("textarea")({
 const FileSelect = styled("div")({
 	position:"relative",
 	textAlign:"center",
+	width: "100%",
+	maxWidth:"350px",
 	"& p": {
 		marginBottom:"10px"
 	}
 })
 const DivFile = styled("div")({
 	
-	width:"350px",
 	height:"257px",
 	
 })

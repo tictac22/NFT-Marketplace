@@ -59,6 +59,7 @@ export const ResellModal:React.FC<Props> = ({show,handleClose,itemId,address:acc
 		nft.set("owner",marketAddress.toLowerCase());
 		nft.set("seller",account);
 		await nft.save();
+		handleClose()
 	}
 	useEffect(() => {
 		const getBalance = async () => {

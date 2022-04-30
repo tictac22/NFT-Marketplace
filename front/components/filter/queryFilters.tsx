@@ -21,15 +21,12 @@ export const QueryFilter:React.FC<Props> = ({type,value,query}) => {
 	const router = useRouter()
 	let status = ""
 	if(type == "status") {
-		console.log(value)
 		status = value === "true" ? "Sold" : "On sale"
 	} else if (type == "Polygon" || "Euro") {
 		status = status + `${type}: ${value}`
 	}
 	const deleteFilter = () => {
-		console.log(query)
 		if(query === "status") {
-			console.log({test:"213",[query]:"hi"})
 			const path = concat({...router.query,status:undefined});
 			return router.push(path)
 		} else if (query == "min") {
