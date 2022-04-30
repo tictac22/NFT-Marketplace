@@ -2,7 +2,6 @@
 import React,{useState,useRef,useEffect} from "react"
 import { NFT } from './../interfaces/nft';
 import { APP_ID } from './../constants/index';
-import { concat } from './../functions/index';
 import { useRouter } from 'next/router';
 interface Props {
 	setData:React.Dispatch<React.SetStateAction<NFT[]>>,
@@ -48,4 +47,16 @@ export const Observable:React.FC<Props> = ({setData,functionName,address}) => {
 	return (
 		<div ref={datasElements}> </div>
 	)
+}
+const concat = (obj,isQuery?:boolean) => {
+	const user = obj["user"]
+    let string = "/user" + "/" + user + "?"
+    isQuery ? string = "&" : ""
+
+	for(let key in obj) {
+		if(key != "user" && obj[key] != undefined) {
+		string = string + key + "=" + obj[key] + "&"
+		} 
+	}
+	return string
 }
