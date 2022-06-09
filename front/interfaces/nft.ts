@@ -1,14 +1,25 @@
-
 export interface NFT {
-	dataImg: {
-		name:string,
-		description:string,
-		image:string
-	}
-	objectId:string,
-	price:string,
-	seller:string,
-	owner:string,
-	itemId:number,
-	sold:boolean,
+	objectId: string
+	price: string
+	seller: string
+	owner: string
+	itemId: number
+	sold: boolean
+	nftData: [
+		{
+			title: string
+			description: string
+			imageUrl: string
+		}
+	]
+}
+
+export interface NFTByName {
+	imageUrl: string
+	title: string
+	nftData: [
+		{
+			_id: string
+		}
+	]
 }

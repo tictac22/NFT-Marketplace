@@ -1,30 +1,24 @@
-
-import React, {useState, useEffect} from "react"
-import Cookies from 'js-cookie';
-import { useRouter } from 'next/router';
+import Cookies from "js-cookie"
+import { useRouter } from "next/router"
+import React, { useEffect, useState } from "react"
 
 interface Props {
-	children: React.ReactNode;
-
+	children: React.ReactNode
 }
-export const IsAuthenticated:React.FC<Props> = ({children}) => {
+export const IsAuthenticated: React.FC<Props> = ({ children }) => {
 	const router = useRouter()
-	const [loading,setLoading] = useState(true);
-	const cookieAddress = !Cookies.get("user_id") || Cookies.get("user_id") === "null" ? undefined : Cookies.get("user_id");
+	const [loading, setLoading] = useState(true)
+	const cookieAddress =
+		!Cookies.get("user_id") || Cookies.get("user_id") === "null" ? undefined : Cookies.get("user_id")
 	useEffect(() => {
-		if(!cookieAddress) {
-			router.push("/registration")
+		if (!cookieAddress) {
+			router.push(`/registration?page=${router.pathname}`)
 		} else {
 			setLoading(false)
 		}
-	},[])
-	if(loading) {
+	}, [])
+	if (loading) {
 		return <div></div>
 	}
-	return (
-		<>
-			{children}
-		</>
-	)
-
+	return <>{children}</>
 }
