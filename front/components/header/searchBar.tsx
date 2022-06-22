@@ -43,6 +43,7 @@ const SearchBar: React.FC = () => {
 		<Autocomplete
 			disablePortal
 			freeSolo
+			disabled={true}
 			blurOnSelect={true}
 			filterOptions={(x) => x}
 			inputValue={inputValue || ""}
