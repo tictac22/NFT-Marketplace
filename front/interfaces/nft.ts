@@ -5,21 +5,19 @@ export interface NFT {
 	owner: string
 	itemId: number
 	sold: boolean
-	nftData: [
-		{
-			title: string
-			description: string
-			imageUrl: string
-		}
-	]
+	nftData: NftData[]
 }
 
 export interface NFTByName {
 	imageUrl: string
 	title: string
-	nftData: [
-		{
-			_id: string
-		}
-	]
+	nftData: NftData[]
+	objectId: string
+}
+
+interface NftData {
+	title: string
+	description: string
+	imageUrl: string
+	_id: string
 }

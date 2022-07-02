@@ -11,6 +11,7 @@ import { useMoralis } from "react-moralis"
 import { BackDrop } from "../components/modals/backdrop"
 import { IsAuthenticated } from "../components/privatePage"
 import { useContract } from "../context/contractContext"
+import { capitalizeFirstLetter } from "../lib/functions"
 import { usePrice } from "./../hooks/getTokenPrice"
 
 interface Form {
@@ -36,7 +37,7 @@ const CreateNft: NextPage = () => {
 		name: "",
 		description: "",
 		price: "",
-		img: { url: "", data: {} },
+		img: { url: "", data: {} }
 	})
 	const isDisabled =
 		form.name.trim() && form.description.trim() && form.price && form.img.url && form.img.data && balance > 0.1
@@ -63,8 +64,8 @@ const CreateNft: NextPage = () => {
 			...prevState,
 			img: {
 				url: URL.createObjectURL(file),
-				data: file,
-			},
+				data: file
+			}
 		}))
 	}
 	const createNft = async () => {
@@ -79,12 +80,12 @@ const CreateNft: NextPage = () => {
 		const imageIpfs = imageFile.ipfs()
 
 		const nftMetadata = {
-			name: form.name,
-			description: form.description,
-			image: imageIpfs,
+			name: capitalizeFirstLetter(form.name),
+			description: capitalizeFirstLetter(form.description),
+			image: imageIpfs
 		}
 		const nftFile = new Moralis.File(nftMetadata.name, {
-			base64: btoa(JSON.stringify(nftMetadata)),
+			base64: btoa(JSON.stringify(nftMetadata))
 		})
 		await nftFile.saveIPFS()
 		const nftIpfs = nftFile.ipfs()
@@ -97,8 +98,8 @@ const CreateNft: NextPage = () => {
 				abi: abi,
 				params: {
 					_tokenURI: nftIpfs,
-					price: ethInWei,
-				},
+					price: ethInWei
+				}
 			}
 			const transaction = await Moralis.executeFunction(sendOptions)
 			await transaction.wait()
@@ -127,7 +128,7 @@ const CreateNft: NextPage = () => {
 		const getBalance = async () => {
 			const options = {
 				chain: "mumbai",
-				address: account!,
+				address: account!
 			}
 			const balance = await Moralis.Web3API.account.getNativeBalance(options)
 			return balance
@@ -213,14 +214,14 @@ const Form = styled("div")({
 	gap: "13px",
 	margin: "20px 0px",
 	"& > div": {
-		marginTop: "10px",
-	},
+		marginTop: "10px"
+	}
 })
 const FormElement = styled("div")({
 	width: "100%",
 	"& p": {
-		marginBottom: "10px",
-	},
+		marginBottom: "10px"
+	}
 })
 const TextArea = styled("textarea")({
 	width: "100%",
@@ -229,7 +230,7 @@ const TextArea = styled("textarea")({
 	maxHeight: "250px",
 	border: "1px solid rgba(0, 0, 0, 0.87)",
 	borderRadius: "4px",
-	padding: "10px",
+	padding: "10px"
 })
 const FileSelect = styled("div")({
 	position: "relative",
@@ -237,11 +238,11 @@ const FileSelect = styled("div")({
 	width: "100%",
 	maxWidth: "350px",
 	"& p": {
-		marginBottom: "10px",
-	},
+		marginBottom: "10px"
+	}
 })
 const DivFile = styled("div")({
-	height: "257px",
+	height: "257px"
 })
 const InputFile = styled("input")({
 	position: "absolute",
@@ -252,7 +253,7 @@ const InputFile = styled("input")({
 	opacity: "0",
 	fontSize: "0",
 	cursor: "pointer",
-	zIndex: "4",
+	zIndex: "4"
 })
 const FileSelectWrapper = styled("div")({
 	position: "relative",
@@ -261,8 +262,8 @@ const FileSelectWrapper = styled("div")({
 	borderRadius: "10px",
 	transition: "color 0.1s linear",
 	"&:hover": {
-		color: "rgb(163, 159, 159)",
-	},
+		color: "rgb(163, 159, 159)"
+	}
 })
 const ImagePreview = styled("img")({
 	maxWidth: "335px",
@@ -274,5 +275,5 @@ const ImagePreview = styled("img")({
 	left: "50%",
 	borderRadius: "16px",
 	top: "50%",
-	transform: "translate(-50%,-50%)",
+	transform: "translate(-50%,-50%)"
 })
