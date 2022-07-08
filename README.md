@@ -19,5 +19,3 @@ BackEnd:
 -   Solidity
 -   Hardhat
 -   Polygon Blockchain (Mumbai testnet)
-
-P.S Currently search bar doesn't work
